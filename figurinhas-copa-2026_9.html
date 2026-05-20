@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Album Copa 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap');
+:root{--verde:#009c3b;--amarelo:#ffdf00;--azul:#002776;--vermelho:#c8102e;--coca:#e8000d;--bg:#0a0e1a;--card-bg:#111827;--card-border:#1f2d40;--text:#e8eaf0;--text-dim:#7a8599;--tenho:#16a34a;--falta:#1f2d40;--repetida:#b45309;--extra-ouro:#f5c518;--extra-prata:#c0c0c0;--extra-bronze:#cd7f32;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;}
+header{background:linear-gradient(135deg,var(--verde) 0%,var(--azul) 60%,#000 100%);padding:20px 24px 16px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--amarelo);box-shadow:0 4px 24px rgba(0,0,0,0.6);}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:2px;color:var(--amarelo);text-shadow:2px 2px 0 var(--azul);}
+header p{font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:2px;}
+.progress-wrap{margin:0 24px;padding:14px 0 10px;}
+.progress-row{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-dim);margin-bottom:6px;}
+.progress-row strong{color:var(--amarelo);font-size:0.92rem;}
+.bar-bg{background:#1c2a3a;border-radius:99px;height:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--verde),var(--amarelo));transition:width 0.4s ease;}
+.stats{display:flex;gap:10px;padding:10px 24px 0;flex-wrap:wrap;}
+.stat-pill{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:6px 14px;font-size:0.78rem;color:var(--text-dim);}
+.stat-pill span{font-weight:700;margin-left:4px;}
+.stat-pill.s-tenho span{color:var(--tenho);}
+.stat-pill.s-falta span{color:#60a5fa;}
+.stat-pill.s-rep span{color:var(--extra-bronze);}
+.legend{display:flex;gap:10px;flex-wrap:wrap;padding:12px 24px 0;font-size:0.73rem;color:var(--text-dim);}
+.legend-item{display:flex;align-items:center;gap:5px;}
+.legend-dot{width:12px;height:12px;border-radius:3px;border:2px solid;}
+.ld-falta{background:var(--falta);border-color:#1e2e42;}
+.ld-tenho{background:rgba(22,163,74,0.18);border-color:var(--tenho);}
+.ld-rep{background:rgba(180,87,9,0.22);border-color:var(--repetida);}
+.filter-bar{display:flex;gap:8px;padding:14px 24px 8px;flex-wrap:wrap;align-items:center;}
+.filter-bar label{font-size:0.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-right:4px;}
+.filter-btn{background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-dim);border-radius:6px;padding:5px 12px;font-size:0.78rem;cursor:pointer;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:0.5px;}
+.filter-btn.active{border-color:var(--amarelo);color:var(--amarelo);background:rgba(255,223,0,0.08);}
+.filter-btn:hover{border-color:#4a6080;color:var(--text);}
+.search-wrap{padding:0 24px 12px;}
+.search-wrap input{width:100%;max-width:400px;background:var(--card-bg);border:1px solid var(--card-border);color:var(--text);border-radius:8px;padding:8px 14px;font-size:0.85rem;font-family:'Barlow',sans-serif;outline:none;transition:border-color 0.2s;}
+.search-wrap input:focus{border-color:var(--verde);}
+.search-wrap input::placeholder{color:var(--text-dim);}
+.danger-zone{padding:10px 24px 0;display:flex;gap:8px;flex-wrap:wrap;}
+.btn-clear{background:transparent;border:1px solid #c8102e44;color:#c8102e99;border-radius:6px;padding:5px 12px;font-size:0.75rem;cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:all 0.15s;}
+.btn-clear:hover{border-color:var(--vermelho);color:var(--vermelho);background:rgba(200,16,46,0.06);}
+.btn-print{background:transparent;border:1px solid #009c3b66;color:#009c3bcc;border-radius:6px;padding:5px 12px;font-size:0.75rem;cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:all 0.15s;}
+.btn-print:hover{border-color:var(--verde);color:var(--verde);background:rgba(0,156,59,0.06);}
+.btn-backup{background:transparent;border:1px solid #2563eb66;color:#2563ebcc;border-radius:6px;padding:5px 12px;font-size:0.75rem;cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:all 0.15s;}
+.btn-backup:hover{border-color:#2563eb;color:#2563eb;background:rgba(37,99,235,0.06);}
+.btn-sync{background:transparent;border:1px solid #7c3aed66;color:#7c3aedcc;border-radius:6px;padding:5px 12px;font-size:0.75rem;cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:all 0.15s;}
+.btn-sync:hover{border-color:#7c3aed;color:#7c3aed;background:rgba(124,58,237,0.06);}
+.btn-sync.syncing{color:#f59e0b;border-color:#f59e0b66;}
+.btn-sync.synced{color:#16a34a;border-color:#16a34a66;}
+.sections{padding:0 24px 60px;}
+.section{margin-bottom:28px;border:1px solid var(--card-border);border-radius:12px;overflow:hidden;background:var(--card-bg);}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none;gap:12px;background:#0f1929;border-bottom:1px solid var(--card-border);}
+.section-header:hover{background:#141e30;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:1px;color:var(--text);display:flex;align-items:center;gap:8px;}
+.section-mini-bar{flex:1;display:flex;align-items:center;gap:8px;min-width:0;}
+.mini-bar-bg{flex:1;height:5px;background:#1c2a3a;border-radius:99px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:99px;background:var(--verde);transition:width 0.3s ease;}
+.section-count{font-size:0.72rem;color:var(--text-dim);white-space:nowrap;}
+.section-count em{color:var(--verde);font-style:normal;}
+.chevron{color:var(--text-dim);font-size:0.7rem;transition:transform 0.2s;}
+.section.open .chevron{transform:rotate(180deg);}
+.sticker-grid{display:none;padding:14px;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:7px;overflow:visible;}
+.section.open .sticker-grid{display:grid;overflow:visible;}
+.sticker-grid.legends-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;}
+.sticker{position:relative;border-radius:8px;border:2px solid #1e2e42;background:var(--falta);min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;padding:4px 2px;user-select:none;-webkit-tap-highlight-color:transparent;overflow:visible;}
+.sticker:hover{border-color:#4a6080;transform:translateY(-1px);}
+.sticker.tenho{background:rgba(22,163,74,0.18);border-color:var(--tenho);}
+.sticker.repetida{background:rgba(180,87,9,0.22);border-color:var(--repetida);}
+.sticker.tipo-fwc{border-color:#1a3a5c;}
+.sticker.tipo-fwc.tenho{border-color:#2563eb;background:rgba(37,99,235,0.18);}
+.sticker.tipo-fwc.repetida{border-color:var(--repetida);background:rgba(180,87,9,0.22);}
+.sticker.tipo-coca{border-color:#3a1010;}
+.sticker.tipo-coca.tenho{border-color:var(--coca);background:rgba(232,0,13,0.18);}
+.sticker.tipo-coca.repetida{border-color:var(--repetida);background:rgba(180,87,9,0.22);}
+.sticker.tipo-legends{min-height:70px;flex-direction:column;padding:6px 4px;cursor:default;}
+.sticker.tipo-legends .num{font-size:0.65rem;color:var(--text);text-align:center;white-space:normal;line-height:1.2;margin-bottom:5px;}
+.legends-dots{display:flex;gap:4px;justify-content:center;}
+.legend-dot-btn{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);cursor:pointer;transition:all 0.15s;}
+.legend-dot-btn.lilas{background:#3a1a6a;}
+.legend-dot-btn.bronze{background:#4a2a08;}
+.legend-dot-btn.prata{background:#2a2a32;}
+.legend-dot-btn.ouro{background:#3a2c00;}
+.legend-dot-btn.lilas.ativo{background:#9b59b6;border-color:#c39bd3;box-shadow:0 0 5px #9b59b6;}
+.legend-dot-btn.bronze.ativo{background:var(--extra-bronze);border-color:#e8a96a;box-shadow:0 0 5px var(--extra-bronze);}
+.legend-dot-btn.prata.ativo{background:var(--extra-prata);border-color:#e0e0e0;box-shadow:0 0 5px var(--extra-prata);}
+.legend-dot-btn.ouro.ativo{background:var(--extra-ouro);border-color:#ffe87a;box-shadow:0 0 5px var(--extra-ouro);}
+.legend-dot-btn:hover{transform:scale(1.25);}
+.sticker .num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.78rem;color:var(--text-dim);line-height:1;}
+.sticker.tenho .num,.sticker.repetida .num{color:var(--text);}
+.rep-badge{position:absolute;top:-6px;right:-6px;background:var(--repetida);color:#fff;border-radius:50%;width:20px;height:20px;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;box-shadow:0 1px 4px rgba(0,0,0,0.4);pointer-events:none;}
+#rep-panel-global{display:none;position:fixed;background:#1a2a3a;border:1px solid var(--repetida);border-radius:8px;padding:5px 7px;flex-direction:row;align-items:center;gap:4px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.5);white-space:nowrap;}
+.rep-panel-count{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;color:var(--extra-ouro);min-width:18px;text-align:center;}
+.rep-panel-btn{background:#243444;border:1px solid #3a4f66;color:var(--text);border-radius:5px;width:22px;height:22px;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.12s;font-family:'Barlow Condensed',sans-serif;font-weight:700;line-height:1;}
+.rep-panel-btn:hover{background:#2e4a60;}
+.rep-panel-btn.btn-zero{font-size:0.65rem;color:#e87070;border-color:#5a2020;}
+.rep-panel-btn.btn-zero:hover{background:#3a1a1a;}
+.section.hidden{display:none;}
+.sticker.hidden{display:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a2a3a;border:1px solid var(--verde);color:var(--text);padding:10px 20px;border-radius:10px;font-size:0.82rem;box-shadow:0 4px 20px rgba(0,0,0,0.5);transition:transform 0.25s ease;z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:#2a3a50;border-radius:3px;}
+
+/* --- TRADES SECTION --- */
+.trades-section{margin:12px 24px 0;background:var(--card-bg);border:1px solid #2a3a1a;border-radius:12px;overflow:hidden;}
+.trades-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;background:#0f1a0f;border-bottom:1px solid #1a2a1a;user-select:none;}
+.trades-header:hover{background:#121e12;}
+.trades-title{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:1px;color:#86efac;}
+.trades-count{font-size:0.75rem;color:#7a8599;}
+.trades-count em{color:#86efac;font-style:normal;}
+.trades-body{display:none;padding:14px 16px;}
+.trades-section.open .trades-body{display:block;}
+.trades-input-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.trades-input{background:#0f1929;border:1px solid #1f2d40;color:var(--text);border-radius:8px;padding:8px 12px;font-size:0.85rem;font-family:'Barlow',sans-serif;outline:none;flex:1;min-width:140px;transition:border-color 0.2s;}
+.trades-input:focus{border-color:#86efac;}
+.trades-input::placeholder{color:var(--text-dim);}
+.trades-add-btn{background:#16532a;border:none;color:#fff;border-radius:8px;padding:8px 16px;font-size:0.85rem;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:0.5px;white-space:nowrap;transition:background 0.15s;}
+.trades-add-btn:hover{background:#1a6b35;}
+.trades-list{display:flex;flex-wrap:wrap;gap:7px;}
+.trade-chip{display:flex;align-items:center;gap:6px;background:#0f2a1a;border:1px solid #1a4a2a;border-radius:20px;padding:5px 10px 5px 12px;font-size:0.8rem;color:#86efac;font-family:'Barlow Condensed',sans-serif;font-weight:600;}
+.trade-chip-recv{background:transparent;border:1px solid #3a4f66;color:#60a5fa;cursor:pointer;font-size:0.7rem;padding:2px 6px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;transition:all 0.15s;}
+.trade-chip-recv:hover{background:#1a3a5c;border-color:#60a5fa;}
+.trade-chip-del{background:transparent;border:none;color:#7a8599;cursor:pointer;font-size:0.85rem;padding:0 2px;line-height:1;transition:color 0.15s;}
+.trade-chip-del:hover{color:#e87070;}
+.trades-empty{font-size:0.82rem;color:var(--text-dim);font-style:italic;}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<header>
+  <h1>Copa 2026 - Minhas Figurinhas</h1>
+  <p>Clique 1x = tenho &nbsp;|&nbsp; 2x = repetida (painel +/-) &nbsp;|&nbsp; 3x = nao tenho</p>
+</header>
+<div class="progress-wrap">
+  <div class="progress-row"><span>Progresso do album oficial</span><strong id="progText">0 / 980</strong></div>
+  <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+</div>
+<div class="stats">
+  <div class="stat-pill s-tenho">Tenho <span id="s-tenho">0</span></div>
+  <div class="stat-pill s-falta">Faltam <span id="s-falta">980</span></div>
+  <div class="stat-pill s-rep">Repetidas <span id="s-rep">0</span></div>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ld-falta"></div> Nao tenho</div>
+  <div class="legend-item"><div class="legend-dot ld-tenho"></div> Tenho</div>
+  <div class="legend-item"><div class="legend-dot ld-rep"></div> Repetida</div>
+</div>
+<div class="filter-bar">
+  <label>Ver:</label>
+  <button class="filter-btn active" data-filter="all">Todas</button>
+  <button class="filter-btn" data-filter="tenho">Tenho</button>
+  <button class="filter-btn" data-filter="falta">Falta</button>
+  <button class="filter-btn" data-filter="repetida">Repetidas</button>
+</div>
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="Buscar selecao, FWC, Coca-Cola, Legends..." />
+</div>
+<div class="danger-zone">
+  <button class="btn-clear" onclick="resetAll()">Apagar tudo</button>
+  <button class="btn-print" onclick="openPrintModal()">Imprimir lista</button>
+  <button class="btn-backup" onclick="exportBackup()">Salvar backup</button>
+  <button class="btn-backup" onclick="document.getElementById('importFile').click()">Carregar backup</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
+  <button class="btn-sync" id="btnSync" onclick="syncGSheets()">Sincronizar Google Sheets</button>
+</div>
+
+<div id="printModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#111827;border:1px solid #1f2d40;border-radius:14px;padding:28px 32px;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.7);">
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#ffdf00;letter-spacing:1px;margin-bottom:18px;">Imprimir Lista</h2>
+    <p style="font-size:0.82rem;color:#7a8599;margin-bottom:16px;">Selecione o que incluir:</p>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
+      <input type="checkbox" id="chk-tenho" checked style="width:16px;height:16px;accent-color:#16a34a;">
+      <span>Figurinhas que <strong>tenho</strong></span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
+      <input type="checkbox" id="chk-falta" checked style="width:16px;height:16px;accent-color:#3b82f6;">
+      <span>Figurinhas que <strong>faltam</strong></span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:20px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
+      <input type="checkbox" id="chk-rep" checked style="width:16px;height:16px;accent-color:#b45309;">
+      <span>Figurinhas <strong>repetidas</strong></span>
+    </label>
+    <p style="font-size:0.82rem;color:#7a8599;margin-bottom:10px;">Ordem das secoes:</p>
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.88rem;color:#e8eaf0;">
+        <input type="radio" name="print-order" id="ord-album" value="album" checked style="accent-color:#ffdf00;"> Ordem do album
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.88rem;color:#e8eaf0;">
+        <input type="radio" name="print-order" id="ord-alpha" value="alpha" style="accent-color:#ffdf00;"> Ordem alfabetica
+      </label>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closePrintModal()" style="flex:1;background:transparent;border:1px solid #2a3a50;color:#7a8599;border-radius:8px;padding:9px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;">Cancelar</button>
+      <button onclick="doPrint()" style="flex:2;background:#009c3b;border:none;color:#fff;border-radius:8px;padding:9px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;">Gerar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRADES SECTION -->
+<div class="trades-section" id="tradesSection">
+  <div class="trades-header" onclick="document.getElementById('tradesSection').classList.toggle('open')">
+    <span class="trades-title">Trocas enviadas - aguardando recebimento</span>
+    <span class="trades-count"><em id="trades-count">0</em> pendentes</span>
+  </div>
+  <div class="trades-body">
+    <div class="trades-input-row">
+      <input type="text" class="trades-input" id="tradeInput" placeholder="Ex: BRA01, POR12, ARG05 (virgula p/ multiplos)" />
+      <button class="trades-add-btn" onclick="addTrade()">+ Adicionar</button>
+    </div>
+    <div class="trades-list" id="tradesList">
+      <span class="trades-empty" id="tradesEmpty">Nenhuma troca pendente.</span>
+    </div>
+  </div>
+</div>
+
+<div class="sections" id="sectionsContainer"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var TEAMS = [
+  { code:'FWC', name:'Copa 2026 - Especiais', flag:'[FWC]', type:'fwc', count:21, official:true, pages:'1-3, 106-109',
+    labels:{0:'FWC-00 Panini',1:'FWC-01 Emblema (cima)',2:'FWC-02 Emblema (baixo)',
+    3:'FWC-03 Mascotes',4:'FWC-04 We Are FIFA',5:'FWC-05 Trionda',
+    6:'FWC-06 Canada',7:'FWC-07 Mexico',8:'FWC-08 EUA',
+    9:'FWC-09',10:'FWC-10',11:'FWC-11',12:'FWC-12',13:'FWC-13',14:'FWC-14',
+    15:'FWC-15',16:'FWC-16',17:'FWC-17',18:'FWC-18',19:'FWC-19',20:'FWC-20'}
+  },
+  { code:'MEX', pages:'8-9', name:'Mexico', flag:'MX', count:20, official:true },
+  { code:'RSA', pages:'10-11', name:'Africa do Sul', flag:'ZA', count:20, official:true },
+  { code:'KOR', pages:'12-13', name:'Coreia do Sul', flag:'KR', count:20, official:true },
+  { code:'CZE', pages:'14-15', name:'Republica Tcheca', flag:'CZ', count:20, official:true },
+  { code:'CAN', pages:'16-17', name:'Canada', flag:'CA', count:20, official:true },
+  { code:'BIH', pages:'18-19', name:'Bosnia-Herzegovina', flag:'BA', count:20, official:true },
+  { code:'QAT', pages:'20-21', name:'Catar', flag:'QA', count:20, official:true },
+  { code:'SUI', pages:'22-23', name:'Suica', flag:'CH', count:20, official:true },
+  { code:'BRA', pages:'24-25', name:'Brasil', flag:'BR', count:20, official:true },
+  { code:'MAR', pages:'26-27', name:'Marrocos', flag:'MA', count:20, official:true },
+  { code:'HAI', pages:'28-29', name:'Haiti', flag:'HT', count:20, official:true },
+  { code:'SCO', pages:'30-31', name:'Escocia', flag:'SCO', count:20, official:true },
+  { code:'USA', pages:'32-33', name:'Estados Unidos', flag:'US', count:20, official:true },
+  { code:'PAR', pages:'34-35', name:'Paraguai', flag:'PY', count:20, official:true },
+  { code:'AUS', pages:'36-37', name:'Australia', flag:'AU', count:20, official:true },
+  { code:'TUR', pages:'38-39', name:'Turquia', flag:'TR', count:20, official:true },
+  { code:'GER', pages:'40-41', name:'Alemanha', flag:'DE', count:20, official:true },
+  { code:'CUW', pages:'42-43', name:'Curacao', flag:'CW', count:20, official:true },
+  { code:'CIV', pages:'44-45', name:'Costa do Marfim', flag:'CI', count:20, official:true },
+  { code:'ECU', pages:'46-47', name:'Equador', flag:'EC', count:20, official:true },
+  { code:'NED', pages:'48-49', name:'Holanda', flag:'NL', count:20, official:true },
+  { code:'JPN', pages:'50-51', name:'Japao', flag:'JP', count:20, official:true },
+  { code:'SWE', pages:'52-53', name:'Suecia', flag:'SE', count:20, official:true },
+  { code:'TUN', pages:'54-55', name:'Tunisia', flag:'TN', count:20, official:true },
+  { code:'BEL', pages:'58-59', name:'Belgica', flag:'BE', count:20, official:true },
+  { code:'EGY', pages:'60-61', name:'Egito', flag:'EG', count:20, official:true },
+  { code:'IRN', pages:'62-63', name:'Ira', flag:'IR', count:20, official:true },
+  { code:'NZL', pages:'64-65', name:'Nova Zelandia', flag:'NZ', count:20, official:true },
+  { code:'ESP', pages:'66-67', name:'Espanha', flag:'ES', count:20, official:true },
+  { code:'CPV', pages:'68-69', name:'Cabo Verde', flag:'CV', count:20, official:true },
+  { code:'KSA', pages:'70-71', name:'Arabia Saudita', flag:'SA', count:20, official:true },
+  { code:'URU', pages:'72-73', name:'Uruguai', flag:'UY', count:20, official:true },
+  { code:'FRA', pages:'74-75', name:'Franca', flag:'FR', count:20, official:true },
+  { code:'SEN', pages:'76-77', name:'Senegal', flag:'SN', count:20, official:true },
+  { code:'IRQ', pages:'78-79', name:'Iraque', flag:'IQ', count:20, official:true },
+  { code:'NOR', pages:'80-81', name:'Noruega', flag:'NO', count:20, official:true },
+  { code:'ARG', pages:'82-83', name:'Argentina', flag:'AR', count:20, official:true },
+  { code:'ALG', pages:'84-85', name:'Algeria', flag:'DZ', count:20, official:true },
+  { code:'AUT', pages:'86-87', name:'Austria', flag:'AT', count:20, official:true },
+  { code:'JOR', pages:'88-89', name:'Jordania', flag:'JO', count:20, official:true },
+  { code:'POR', pages:'90-91', name:'Portugal', flag:'PT', count:20, official:true },
+  { code:'COD', pages:'92-93', name:'Congo (RD)', flag:'CD', count:20, official:true },
+  { code:'UZB', pages:'94-95', name:'Uzbequistao', flag:'UZ', count:20, official:true },
+  { code:'COL', pages:'96-97', name:'Colombia', flag:'CO', count:20, official:true },
+  { code:'ENG', pages:'98-99', name:'Inglaterra', flag:'ENG', count:20, official:true },
+  { code:'CRO', pages:'100-101', name:'Croacia', flag:'HR', count:20, official:true },
+  { code:'GHA', pages:'102-103', name:'Gana', flag:'GH', count:20, official:true },
+  { code:'PAN', pages:'104-105', name:'Panama', flag:'PA', count:20, official:true },
+  { code:'COCA', pages:'112-113', name:'Coca-Cola - Especiais', flag:'[CC]', type:'coca', count:14, official:false,
+    labels:{1:'CC-1',2:'CC-2',3:'CC-3',4:'CC-4',5:'CC-5',6:'CC-6',7:'CC-7',
+    8:'CC-8',9:'CC-9',10:'CC-10',11:'CC-11',12:'CC-12',13:'CC-13',14:'CC-14'}
+  },
+  { code:'LEGENDS', pages:'-', name:'Legends - Especiais', flag:'[LEG]', type:'legends', count:20, official:false,
+    players:['Achraf Hakimi','Erling Haaland','Alphonso Davies','Jude Bellingham','Moises Caicedo',
+    'Cristiano Ronaldo','Jeremy Doku','Luis Diaz','Cody Gakpo','Raul Jimenez',
+    'Lamine Yamal','Kylian Mbappe','Lionel Messi','Luka Modric','Christian Pulisic',
+    'Mohamed Salah','Son Heung-Min','Federico Valverde','Vinicius Junior','Florian Wirtz']
+  }
+];
+
+var STORE_KEY = 'copa2026_v3';
+var TRADES_KEY_OLD = 'copa2026_trades_v1';
+var GAPI_CLIENT_ID = '38188522972-oprc0r1bteo0089s6gedo0ufmfdnu8nb.apps.googleusercontent.com';
+var GSHEET_ID = '1g-AudhC3Ipb_Q_ZUw_ip1HneapM_vgOyUO_wiKIVoS0';
+var GAPI_SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+var gapiReady = false;
+var gapiToken = null;
+function loadState(){ try{ var r=localStorage.getItem(STORE_KEY); return r?JSON.parse(r):{}; }catch(e){ return {}; } }
+function saveState(s){ localStorage.setItem(STORE_KEY,JSON.stringify(s)); }
+var state = loadState();
+
+function getVal(code,n){ return state[code+'-'+n]||0; }
+function setVal(code,n,v){ var k=code+'-'+n; if(v===0){ delete state[k]; }else{ state[k]=v; } saveState(state); }
+
+function buildAll(){
+  var container=document.getElementById('sectionsContainer');
+  container.innerHTML='';
+  TEAMS.forEach(function(team){
+    var section=document.createElement('div');
+    section.className='section';
+    section.dataset.code=team.code;
+    section.dataset.name=team.name.toLowerCase();
+    var hdr=document.createElement('div');
+    hdr.className='section-header';
+    var title=document.createElement('div');
+    title.className='section-title';
+    var pageInfo='';
+    if(team.pages&&team.pages!=='-') pageInfo=' <span style="font-size:0.7rem;color:#7a8599;font-family:Barlow Condensed,sans-serif;font-weight:400;">(pag. '+team.pages+')</span>';
+    title.innerHTML='<span>'+team.flag+'</span> '+team.code+' - '+team.name+pageInfo;
+    var miniBar=document.createElement('div');
+    miniBar.className='section-mini-bar';
+    miniBar.innerHTML='<div class="mini-bar-bg"><div class="mini-bar-fill" id="mb-'+team.code+'" style="width:0%"></div></div><span class="section-count" id="sc-'+team.code+'"><em>0</em>/'+team.count+'</span>';
+    var chevron=document.createElement('span');
+    chevron.className='chevron';
+    chevron.textContent='v';
+    hdr.appendChild(title);
+    hdr.appendChild(miniBar);
+    hdr.appendChild(chevron);
+    hdr.addEventListener('click',function(){ section.classList.toggle('open'); });
+    var grid=document.createElement('div');
+    grid.className=team.type==='legends'?'sticker-grid legends-grid':'sticker-grid';
+    var start=team.code==='FWC'?0:1;
+    var end=team.code==='FWC'?(team.count-1):team.count;
+    for(var n=start;n<=end;n++){ grid.appendChild(buildSticker(team,n)); }
+    section.appendChild(hdr);
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+  updateAll();
+}
+
+function buildSticker(team,n){
+  var el=document.createElement('div');
+  var tipo=team.type||'normal';
+  el.className='sticker tipo-'+tipo;
+  el.dataset.code=team.code;
+  el.dataset.n=n;
+  el.dataset.teamCode=team.code;
+  el.dataset.teamN=n;
+  var numEl=document.createElement('div');
+  numEl.className='num';
+  if(team.type==='legends'){
+    var playerName=team.players?team.players[n-1]:'Legends '+n;
+    numEl.textContent=playerName;
+    el.appendChild(numEl);
+    var dotsRow=document.createElement('div');
+    dotsRow.className='legends-dots';
+    ['lilas','bronze','prata','ouro'].forEach(function(cor){
+      var dot=document.createElement('div');
+      dot.className='legend-dot-btn '+cor;
+      dot.title=cor.charAt(0).toUpperCase()+cor.slice(1);
+      var k='LEGENDS-'+n+'-'+cor;
+      if(state[k]) dot.classList.add('ativo');
+      dot.addEventListener('click',(function(c,pn,co,d){
+        return function(e){
+          e.stopPropagation();
+          var kk='LEGENDS-'+pn+'-'+co;
+          state[kk]=state[kk]?0:1;
+          if(!state[kk]) delete state[kk];
+          saveState(state);
+          d.classList.toggle('ativo',!!state[kk]);
+          updateSection(TEAMS.find(function(t){ return t.code===c; }));
+          updateGlobal();
+          showToast(state[kk]?1:0,pn+' '+co,'');
+        };
+      })(team.code,n,cor,dot));
+      dotsRow.appendChild(dot);
+    });
+    el.appendChild(dotsRow);
+    return el;
+  }
+  numEl.textContent=team.labels&&team.labels[n]?team.labels[n]:team.code+' '+n;
+  el.appendChild(numEl);
+  el.addEventListener('click',(function(t,nn,elem){
+    return function(e){
+      var cur=getVal(t.code,nn);
+      var next;
+      if(cur===0) next=1;
+      else if(cur===1) next=2;
+      else next=0;
+      setVal(t.code,nn,next);
+      updateSticker(elem,t,nn);
+      updateSection(t);
+      updateGlobal();
+      showToast(next,t.code,nn);
+    };
+  })(team,n,el));
+  el.addEventListener('contextmenu',(function(t,nn){
+    return function(e){
+      e.preventDefault();
+      addTradeFromSticker(t.code,nn);
+    };
+  })(team,n));
+  updateSticker(el,team,n);
+  return el;
+}
+
+function updateSticker(el,team,n){
+  var v=getVal(team.code,n);
+  el.classList.remove('tenho','repetida');
+  var badge=el.querySelector('.rep-badge');
+  if(v===1){
+    el.classList.add('tenho');
+    if(badge) badge.remove();
+  } else if(v>=2){
+    el.classList.add('repetida');
+    var reps=v-1;
+    if(!badge){ badge=document.createElement('div'); badge.className='rep-badge'; el.appendChild(badge); }
+    badge.textContent='+'+reps;
+  } else {
+    if(badge) badge.remove();
+  }
+}
+
+function updateSection(team){
+  if(!team) return;
+  var tenho=0, total=team.count;
+  if(team.type==='legends'){
+    total=team.count*4;
+    for(var n=1;n<=team.count;n++){
+      ['lilas','bronze','prata','ouro'].forEach(function(cor){ if(state['LEGENDS-'+n+'-'+cor]) tenho++; });
+    }
+  } else {
+    var start=team.code==='FWC'?0:1;
+    var end=team.code==='FWC'?(team.count-1):team.count;
+    for(var n=start;n<=end;n++){ if(getVal(team.code,n)>=1) tenho++; }
+  }
+  var pct=Math.round((tenho/total)*100);
+  var mb=document.getElementById('mb-'+team.code);
+  var sc=document.getElementById('sc-'+team.code);
+  if(mb) mb.style.width=pct+'%';
+  if(sc) sc.innerHTML='<em>'+tenho+'</em>/'+total;
+}
+
+function updateGlobal(){
+  var tenho=0,reps=0,officialTotal=0,officialTenho=0,allTotal=0;
+  TEAMS.forEach(function(team){
+    var start=team.code==='FWC'?0:1;
+    var end=team.code==='FWC'?(team.count-1):team.count;
+    if(team.type==='legends'){
+      for(var n=1;n<=team.count;n++){
+        ['lilas','bronze','prata','ouro'].forEach(function(cor){ if(state['LEGENDS-'+n+'-'+cor]) tenho++; });
+      }
+      allTotal+=team.count*4;
+    } else {
+      for(var n=start;n<=end;n++){
+        var v=getVal(team.code,n);
+        if(v>=1) tenho++;
+        if(v>=2) reps+=(v-1);
+        allTotal++;
+        if(team.official){ officialTotal++; if(v>=1) officialTenho++; }
+      }
+    }
+  });
+  var falta=allTotal-tenho;
+  document.getElementById('s-tenho').textContent=tenho;
+  document.getElementById('s-falta').textContent=Math.max(0,falta);
+  document.getElementById('s-rep').textContent=reps;
+  var pct=officialTotal>0?((officialTenho/officialTotal)*100).toFixed(1):0;
+  document.getElementById('progText').textContent=officialTenho+' / '+officialTotal;
+  document.getElementById('barFill').style.width=pct+'%';
+}
+
+function updateAll(){
+  TEAMS.forEach(function(team){
+    updateSection(team);
+    if(team.type==='legends'){
+      var grid=document.querySelector('[data-code="'+team.code+'"] .sticker-grid');
+      if(!grid) return;
+      grid.querySelectorAll('.sticker').forEach(function(el,i){
+        var n=i+1;
+        ['lilas','bronze','prata','ouro'].forEach(function(cor){
+          var dot=el.querySelector('.legend-dot-btn.'+cor);
+          if(dot) dot.classList.toggle('ativo',!!state['LEGENDS-'+n+'-'+cor]);
+        });
+      });
+      return;
+    }
+    var start=team.code==='FWC'?0:1;
+    var end=team.code==='FWC'?(team.count-1):team.count;
+    var grid=document.querySelector('[data-code="'+team.code+'"] .sticker-grid');
+    if(!grid) return;
+    grid.querySelectorAll('.sticker').forEach(function(el,i){
+      updateSticker(el,team,start+i);
+    });
+  });
+  updateGlobal();
+}
+
+// --- GLOBAL REP PANEL ---
+var gPanel=document.createElement('div');
+gPanel.id='rep-panel-global';
+gPanel.innerHTML='<button class="rep-panel-btn" id="gp-minus">-</button><span class="rep-panel-count" id="gp-count">0</span><button class="rep-panel-btn" id="gp-plus">+</button><button class="rep-panel-btn btn-zero" id="gp-zero" title="Zerar">del</button>';
+document.body.appendChild(gPanel);
+var gPanelTarget=null;
+var gPanelHideTimer=null;
+
+function showGPanel(stickerEl){
+  gPanelTarget=stickerEl;
+  var code=stickerEl.dataset.teamCode;
+  var n=parseInt(stickerEl.dataset.teamN);
+  var reps=getVal(code,n)-1;
+  document.getElementById('gp-count').textContent=reps;
+  gPanel.style.visibility='hidden';
+  gPanel.style.display='flex';
+  gPanel.style.top='0px';
+  gPanel.style.left='0px';
+  var sRect=stickerEl.getBoundingClientRect();
+  var pRect=gPanel.getBoundingClientRect();
+  var left=sRect.left+sRect.width/2-pRect.width/2;
+  left=Math.max(6,Math.min(left,window.innerWidth-pRect.width-6));
+  var spaceBelow=window.innerHeight-sRect.bottom;
+  var top=spaceBelow<pRect.height+16?sRect.top-pRect.height-8:sRect.bottom+6;
+  gPanel.style.left=left+'px';
+  gPanel.style.top=top+'px';
+  gPanel.style.visibility='visible';
+}
+
+function hideGPanel(){ gPanel.style.display='none'; gPanelTarget=null; }
+
+gPanel.addEventListener('mouseenter',function(){ clearTimeout(gPanelHideTimer); });
+gPanel.addEventListener('mouseleave',function(){ gPanelHideTimer=setTimeout(hideGPanel,80); });
+
+document.addEventListener('mouseenter',function(e){
+  if(!(e.target instanceof Element)) return;
+  var s=e.target.closest('.sticker.repetida');
+  if(s){ clearTimeout(gPanelHideTimer); showGPanel(s); }
+},true);
+document.addEventListener('mouseleave',function(e){
+  if(!(e.target instanceof Element)) return;
+  var s=e.target.closest('.sticker.repetida');
+  if(s&&!s.contains(e.relatedTarget)){ gPanelHideTimer=setTimeout(hideGPanel,80); }
+},true);
+
+document.getElementById('gp-minus').addEventListener('click',function(e){
+  e.stopPropagation();
+  if(!gPanelTarget) return;
+  var code=gPanelTarget.dataset.teamCode;
+  var n=parseInt(gPanelTarget.dataset.teamN);
+  var cur=getVal(code,n);
+  var team=TEAMS.find(function(t){ return t.code===code; });
+  if(cur<=2){ setVal(code,n,1); hideGPanel(); }
+  else{ setVal(code,n,cur-1); document.getElementById('gp-count').textContent=cur-2; }
+  if(team){ updateSticker(gPanelTarget,team,n); updateSection(team); }
+  updateGlobal();
+});
+document.getElementById('gp-plus').addEventListener('click',function(e){
+  e.stopPropagation();
+  if(!gPanelTarget) return;
+  var code=gPanelTarget.dataset.teamCode;
+  var n=parseInt(gPanelTarget.dataset.teamN);
+  var cur=getVal(code,n);
+  var team=TEAMS.find(function(t){ return t.code===code; });
+  setVal(code,n,cur+1);
+  document.getElementById('gp-count').textContent=cur-1;
+  if(team){ updateSticker(gPanelTarget,team,n); updateSection(team); }
+  updateGlobal();
+});
+document.getElementById('gp-zero').addEventListener('click',function(e){
+  e.stopPropagation();
+  if(!gPanelTarget) return;
+  var code=gPanelTarget.dataset.teamCode;
+  var n=parseInt(gPanelTarget.dataset.teamN);
+  var team=TEAMS.find(function(t){ return t.code===code; });
+  setVal(code,n,0);
+  hideGPanel();
+  if(team){ updateSticker(gPanelTarget,team,n); updateSection(team); }
+  updateGlobal();
+});
+
+// --- TOAST ---
+var toastTimer;
+function showToast(type,code,n){
+  var t=document.getElementById('toast');
+  var id=code+' '+n;
+  var msg=type===0?'Removida: '+id:type===1?'Tenho: '+id:'Repetida: '+id;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ t.classList.remove('show'); },1800);
+}
+
+// --- FILTERS ---
+var currentFilter='all';
+document.querySelectorAll('.filter-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentFilter=btn.dataset.filter;
+    applyFilters();
+  });
+});
+document.getElementById('searchInput').addEventListener('input',applyFilters);
+function applyFilters(){
+  var q=document.getElementById('searchInput').value.toLowerCase().trim();
+  document.querySelectorAll('.section').forEach(function(sec){
+    var code=sec.dataset.code.toLowerCase();
+    var name=sec.dataset.name;
+    var matchSearch=!q||code.includes(q)||name.includes(q);
+    if(!matchSearch){ sec.classList.add('hidden'); return; }
+    var stickers=sec.querySelectorAll('.sticker');
+    var anyVisible=false;
+    stickers.forEach(function(s){
+      var sCode=s.dataset.code;
+      var sN=parseInt(s.dataset.n);
+      var v=getVal(sCode,sN);
+      var show=true;
+      if(currentFilter==='tenho'&&v!==1) show=false;
+      if(currentFilter==='falta'&&v!==0) show=false;
+      if(currentFilter==='repetida'&&v<2) show=false;
+      s.classList.toggle('hidden',!show);
+      if(show) anyVisible=true;
+    });
+    if(currentFilter!=='all'&&!anyVisible){ sec.classList.add('hidden'); }
+    else{ sec.classList.remove('hidden'); }
+  });
+}
+
+// --- RESET ---
+function resetAll(){
+  if(!confirm('Tem certeza que quer apagar TODAS as marcacoes?')) return;
+  state={};
+  saveState(state);
+  updateAll();
+}
+
+// --- PRINT ---
+function openPrintModal(){ document.getElementById('printModal').style.display='flex'; }
+function closePrintModal(){ document.getElementById('printModal').style.display='none'; }
+function doPrint(){
+  var inclTenho=document.getElementById('chk-tenho').checked;
+  var inclFalta=document.getElementById('chk-falta').checked;
+  var inclRep=document.getElementById('chk-rep').checked;
+  if(!inclTenho&&!inclFalta&&!inclRep){ alert('Selecione pelo menos uma opcao.'); return; }
+  var order=document.querySelector('input[name="print-order"]:checked').value;
+  var teamList=order==='alpha'?TEAMS.slice().sort(function(a,b){ return a.name.localeCompare(b.name); }):TEAMS;
+  var sections=[];
+  teamList.forEach(function(team){
+    var start=team.code==='FWC'?0:1;
+    var end=team.code==='FWC'?(team.count-1):team.count;
+    var tenhoList=[],faltaList=[],repList=[];
+    if(team.type==='legends'){
+      for(var n=1;n<=team.count;n++){
+        var pname=team.players?team.players[n-1]:'Legends '+n;
+        ['lilas','bronze','prata','ouro'].forEach(function(cor){
+          var k='LEGENDS-'+n+'-'+cor;
+          if(state[k]) tenhoList.push(pname+' ('+cor+')');
+          else faltaList.push(pname+' ('+cor+')');
+        });
+      }
+    } else {
+      for(var n=start;n<=end;n++){
+        var v=getVal(team.code,n);
+        var label=team.labels&&team.labels[n]?team.labels[n]:team.code+' '+n;
+        if(v===0) faltaList.push(label);
+        else if(v===1) tenhoList.push(label);
+        else if(v>=2) repList.push(label+' x'+(v-1));
+      }
+    }
+    var hasData=(inclTenho&&tenhoList.length>0)||(inclFalta&&faltaList.length>0)||(inclRep&&repList.length>0);
+    if(!hasData) return;
+    var html='<div style="margin-bottom:18px;break-inside:avoid;">';
+    var pgLabel='';
+    if(team.pages&&team.pages!=='-') pgLabel=' (pag. '+team.pages+')';
+    html+='<div style="font-weight:700;font-size:13pt;border-bottom:2px solid #009c3b;padding-bottom:3px;margin-bottom:8px;">'+team.flag+' '+team.code+' - '+team.name+'<span style="font-size:9pt;font-weight:400;color:#666;">'+pgLabel+'</span></div>';
+    if(inclTenho&&tenhoList.length>0) html+='<div style="margin-bottom:6px;"><span style="font-weight:700;color:#16a34a;">Tenho ('+tenhoList.length+'):</span> '+tenhoList.join(', ')+'</div>';
+    if(inclFalta&&faltaList.length>0) html+='<div style="margin-bottom:6px;"><span style="font-weight:700;color:#2563eb;">Faltam ('+faltaList.length+'):</span> '+faltaList.join(', ')+'</div>';
+    if(inclRep&&repList.length>0) html+='<div style="margin-bottom:6px;"><span style="font-weight:700;color:#b45309;">Repetidas ('+repList.length+'):</span> '+repList.join(', ')+'</div>';
+    html+='</div>';
+    sections.push(html);
+  });
+  if(sections.length===0){ alert('Nenhuma figurinha encontrada.'); return; }
+  var tipos=[];
+  if(inclTenho) tipos.push('Tenho');
+  if(inclFalta) tipos.push('Faltam');
+  if(inclRep) tipos.push('Repetidas');
+  var titulo='Copa 2026 - '+tipos.join(' / ');
+  var data=new Date().toLocaleDateString('pt-BR');
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>'+titulo+'</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;padding:24px 32px;background:#fff;}h1{font-size:16pt;color:#002776;border-bottom:3px solid #009c3b;padding-bottom:6px;margin-bottom:4px;}.subtitle{font-size:8.5pt;color:#666;margin-bottom:20px;}.sections{column-count:2;column-gap:28px;}@media print{.no-print{display:none;}.sections{column-count:2;}}</style></head><body><h1>Copa 2026 - Minhas Figurinhas</h1><p class="subtitle">Gerado em '+data+' - '+titulo+'</p><button class="no-print" onclick="window.print()" style="margin-bottom:16px;background:#009c3b;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:10pt;cursor:pointer;">Imprimir / Salvar PDF</button><div class="sections">'+sections.join('\n')+'</div></body></html>');
+  win.document.close();
+  closePrintModal();
+}
+
+// --- TRADES ---
+var TRADES_KEY = 'copa2026_trades_v2';
+function loadTrades(){
+  try{
+    var r=localStorage.getItem(TRADES_KEY);
+    if(r) return JSON.parse(r);
+    // migrate from v1
+    var old=localStorage.getItem('copa2026_trades_v1');
+    if(old){ var d=JSON.parse(old); saveTrades(d); return d; }
+    return [];
+  }catch(e){ return []; }
+}
+function saveTrades(t){ localStorage.setItem(TRADES_KEY,JSON.stringify(t)); }
+var trades = loadTrades();
+
+// Parse trade code like BRA01 -> {code:'BRA', n:1}
+function parseTrade(str){
+  var m=str.trim().toUpperCase().match(/^([A-Z]{2,6})(\d{1,2})$/);
+  if(!m) return null;
+  return { code:m[1], n:parseInt(m[2]), raw:m[1]+('0'+m[2]).slice(-2) };
+}
+
+// Get album order index for a trade
+function tradeOrderIndex(tr){
+  var teamIdx=TEAMS.findIndex(function(t){ return t.code===tr.code; });
+  if(teamIdx===-1) return 99999;
+  return teamIdx*100+tr.n;
+}
+
+function sortTrades(){
+  trades.sort(function(a,b){
+    var pa=parseTrade(a), pb=parseTrade(b);
+    if(!pa&&!pb) return 0;
+    if(!pa) return 1;
+    if(!pb) return -1;
+    return tradeOrderIndex(pa)-tradeOrderIndex(pb);
+  });
+}
+
+function renderTrades(){
+  var list=document.getElementById('tradesList');
+  var count=document.getElementById('trades-count');
+  list.innerHTML='';
+  count.textContent=trades.length;
+  if(trades.length===0){
+    var em=document.createElement('span');
+    em.className='trades-empty';
+    em.textContent='Nenhuma troca pendente.';
+    list.appendChild(em);
+    return;
+  }
+  trades.forEach(function(raw,idx){
+    var tr=parseTrade(raw);
+    var chip=document.createElement('div');
+    chip.className='trade-chip';
+    var label=document.createElement('span');
+    label.textContent=tr?tr.raw:raw;
+    var btnRecv=document.createElement('button');
+    btnRecv.className='trade-chip-recv';
+    btnRecv.textContent='Recebi';
+    btnRecv.title='Marcar como recebida e adicionar ao album';
+    btnRecv.addEventListener('click',(function(i,t){ return function(){
+      if(t){
+        var team=TEAMS.find(function(tm){ return tm.code===t.code; });
+        if(team){
+          setVal(t.code,t.n,1);
+          var stickerEl=document.querySelector('.sticker[data-code="'+t.code+'"][data-n="'+t.n+'"]');
+          if(stickerEl) updateSticker(stickerEl,team,t.n);
+          updateSection(team);
+          updateGlobal();
+        }
+      }
+      trades.splice(i,1);
+      saveTrades(trades);
+      renderTrades();
+    }; })(idx,tr));
+    var btnDel=document.createElement('button');
+    btnDel.className='trade-chip-del';
+    btnDel.textContent='x';
+    btnDel.title='Remover sem marcar como recebida';
+    btnDel.addEventListener('click',(function(i){ return function(){ trades.splice(i,1); saveTrades(trades); renderTrades(); }; })(idx));
+    chip.appendChild(label);
+    chip.appendChild(btnRecv);
+    chip.appendChild(btnDel);
+    list.appendChild(chip);
+  });
+}
+
+function addTrade(){
+  var input=document.getElementById('tradeInput');
+  var val=input.value.trim();
+  if(!val) return;
+  var entries=val.split(',').map(function(s){ return s.trim(); }).filter(function(s){ return s.length>0; });
+  var invalid=[];
+  entries.forEach(function(e){
+    var tr=parseTrade(e);
+    if(!tr){ invalid.push(e); return; }
+    if(!trades.includes(tr.raw)) trades.push(tr.raw);
+  });
+  if(invalid.length>0) alert('Formato invalido (use ex: BRA01, POR12): '+invalid.join(', '));
+  sortTrades();
+  saveTrades(trades);
+  renderTrades();
+  input.value='';
+  input.focus();
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var inp=document.getElementById('tradeInput');
+  if(inp) inp.addEventListener('keydown',function(e){ if(e.key==='Enter') addTrade(); });
+});
+
+function addTradeFromSticker(code,n){
+  var raw=code+('0'+n).slice(-2);
+  if(!trades.includes(raw)) trades.push(raw);
+  sortTrades();
+  saveTrades(trades);
+  renderTrades();
+  document.getElementById('tradesSection').classList.add('open');
+  showToast(1,raw,'');
+}
+
+renderTrades();
+
+// --- EXPORT / IMPORT BACKUP ---
+function exportBackup(){
+  var data={ album:state, trades:trades, exportedAt:new Date().toISOString() };
+  var json=JSON.stringify(data,null,2);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='album-copa2026-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(event){
+  var file=event.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.album) throw new Error('Arquivo invalido');
+      if(!confirm('Isso vai substituir todos os dados atuais. Confirma?')) return;
+      state=data.album;
+      saveState(state);
+      if(data.trades){ trades=data.trades; saveTrades(trades); renderTrades(); }
+      updateAll();
+      alert('Backup carregado com sucesso!');
+    }catch(err){
+      alert('Erro ao carregar backup: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+
+// --- GOOGLE SHEETS SYNC ---
+var tokenClient=null;
+
+function initGoogleAuth(){
+  if(typeof google==='undefined'||!google.accounts) return;
+  tokenClient=google.accounts.oauth2.initTokenClient({
+    client_id:GAPI_CLIENT_ID,
+    scope:GAPI_SCOPES,
+    callback:function(resp){
+      if(resp.error){ alert('Erro na autenticacao Google: '+resp.error); return; }
+      gapiToken=resp.access_token;
+      doSyncGSheets();
+    }
+  });
+}
+
+window.addEventListener('load',function(){
+  setTimeout(initGoogleAuth,1500);
+});
+
+function syncGSheets(){
+  if(!tokenClient){ alert('API do Google nao carregou. Verifique sua conexao e recarregue a pagina.'); return; }
+  var btn=document.getElementById('btnSync');
+  btn.textContent='Autenticando...';
+  btn.className='btn-sync syncing';
+  if(gapiToken){ doSyncGSheets(); }
+  else{ tokenClient.requestAccessToken(); }
+}
+
+function doSyncGSheets(){
+  var btn=document.getElementById('btnSync');
+  btn.textContent='Sincronizando...';
+  btn.className='btn-sync syncing';
+
+  // Build rows: header + one row per sticker that has a value
+  var rows=[['Codigo','Tipo','Valor','Paginas']];
+  TEAMS.forEach(function(team){
+    if(team.type==='legends'){
+      for(var n=1;n<=team.count;n++){
+        var pname=team.players?team.players[n-1]:'Legends '+n;
+        ['lilas','bronze','prata','ouro'].forEach(function(cor){
+          var k='LEGENDS-'+n+'-'+cor;
+          rows.push(['LEGENDS-'+n+'-'+cor, 'legends', state[k]?'1':'0', '-']);
+        });
+      }
+    } else {
+      var start=team.code==='FWC'?0:1;
+      var end=team.code==='FWC'?(team.count-1):team.count;
+      for(var n=start;n<=end;n++){
+        var v=getVal(team.code,n);
+        var label=team.labels&&team.labels[n]?team.labels[n]:team.code+('0'+n).slice(-2);
+        rows.push([label, team.type||'normal', String(v), team.pages||'']);
+      }
+    }
+  });
+
+  // Add trades sheet data
+  var tradeRows=[['Figurinha Enviada']];
+  trades.forEach(function(t){ tradeRows.push([t]); });
+
+  // Write to sheet using Sheets API batchUpdate
+  var body={
+    valueInputOption:'RAW',
+    data:[
+      {range:'Album!A1',values:rows},
+      {range:'Trocas!A1',values:tradeRows}
+    ]
+  };
+
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+GSHEET_ID+'/values:batchUpdate',{
+    method:'POST',
+    headers:{
+      'Authorization':'Bearer '+gapiToken,
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify(body)
+  })
+  .then(function(r){
+    if(r.status===401){ gapiToken=null; tokenClient.requestAccessToken(); return; }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  })
+  .then(function(data){
+    if(!data) return;
+    btn.textContent='Sincronizado!';
+    btn.className='btn-sync synced';
+    setTimeout(function(){ btn.textContent='Sincronizar Google Sheets'; btn.className='btn-sync'; },3000);
+  })
+  .catch(function(err){
+    alert('Erro ao sincronizar: '+err.message);
+    btn.textContent='Sincronizar Google Sheets';
+    btn.className='btn-sync';
+  });
+}
+
+// Auto-sync after every state change
+var syncTimer=null;
+function scheduleSync(){
+  if(!gapiToken) return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(doSyncGSheets,3000);
+}
+
+// Patch saveState and saveTrades to trigger auto-sync
+var _origSaveState=saveState;
+saveState=function(s){ _origSaveState(s); scheduleSync(); };
+var _origSaveTrades=saveTrades;
+saveTrades=function(t){ _origSaveTrades(t); scheduleSync(); };
+
+buildAll();
+</script>
+</body>
+</html>
