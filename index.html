@@ -859,6 +859,7 @@ function initGoogleAuth(){
   tokenClient=google.accounts.oauth2.initTokenClient({
     client_id:GAPI_CLIENT_ID,
     scope:GAPI_SCOPES,
+    redirect_uri:'https://danielvasques-1978.github.io/album-copa-2026/',
     callback:function(resp){
       if(resp.error){ alert('Erro na autenticacao Google: '+resp.error); return; }
       gapiToken=resp.access_token;
