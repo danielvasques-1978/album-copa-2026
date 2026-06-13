@@ -165,6 +165,7 @@ header p{font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:2px;}
   <button class="btn-backup" onclick="document.getElementById('importFile').click()">Carregar backup</button>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
   <button class="btn-sync" id="btnSync" onclick="syncGSheets()">Sincronizar Google Sheets</button>
+  <button class="btn-sync" id="btnLoad" onclick="loadFromGSheets()">Carregar do Google Sheets</button>
 </div>
 
 <div id="printModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;">
@@ -179,9 +180,18 @@ header p{font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:2px;}
       <input type="checkbox" id="chk-falta" checked style="width:16px;height:16px;accent-color:#3b82f6;">
       <span>Figurinhas que <strong>faltam</strong></span>
     </label>
-    <label style="display:flex;align-items:center;gap:10px;margin-bottom:20px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
       <input type="checkbox" id="chk-rep" checked style="width:16px;height:16px;accent-color:#b45309;">
       <span>Figurinhas <strong>repetidas</strong></span>
+    </label>
+    <p style="font-size:0.82rem;color:#7a8599;margin-bottom:10px;margin-top:4px;">Incluir secoes especiais:</p>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
+      <input type="checkbox" id="chk-coca" checked style="width:16px;height:16px;accent-color:#e8000d;">
+      <span>Figurinhas <strong>Coca-Cola</strong></span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:20px;cursor:pointer;font-size:0.9rem;color:#e8eaf0;">
+      <input type="checkbox" id="chk-leg" checked style="width:16px;height:16px;accent-color:#9b59b6;">
+      <span>Figurinhas <strong>Legends</strong></span>
     </label>
     <p style="font-size:0.82rem;color:#7a8599;margin-bottom:10px;">Ordem das secoes:</p>
     <div style="display:flex;gap:8px;margin-bottom:20px;">
@@ -221,12 +231,12 @@ header p{font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:2px;}
 
 <script>
 var TEAMS = [
-  { code:'FWC', name:'Copa 2026 - Especiais', flag:'[FWC]', type:'fwc', count:21, official:true, pages:'1-3, 106-109',
+  { code:'FWC', name:'Copa 2026 - Especiais', flag:'[FWC]', type:'fwc', count:20, official:true, pages:'1-3, 106-109',
     labels:{0:'FWC-00 Panini',1:'FWC-01 Emblema (cima)',2:'FWC-02 Emblema (baixo)',
     3:'FWC-03 Mascotes',4:'FWC-04 We Are FIFA',5:'FWC-05 Trionda',
     6:'FWC-06 Canada',7:'FWC-07 Mexico',8:'FWC-08 EUA',
     9:'FWC-09',10:'FWC-10',11:'FWC-11',12:'FWC-12',13:'FWC-13',14:'FWC-14',
-    15:'FWC-15',16:'FWC-16',17:'FWC-17',18:'FWC-18',19:'FWC-19',20:'FWC-20'}
+    15:'FWC-15',16:'FWC-16',17:'FWC-17',18:'FWC-18',19:'FWC-19'}
   },
   { code:'MEX', pages:'8-9', name:'Mexico', flag:'MX', count:20, official:true },
   { code:'RSA', pages:'10-11', name:'Africa do Sul', flag:'ZA', count:20, official:true },
@@ -637,15 +647,31 @@ function resetAll(){
 // --- PRINT ---
 function openPrintModal(){ document.getElementById('printModal').style.display='flex'; }
 function closePrintModal(){ document.getElementById('printModal').style.display='none'; }
+var GROUPS = [
+  { name:'Grupo A', codes:['MEX','RSA','KOR','CZE'] },
+  { name:'Grupo B', codes:['CAN','BIH','QAT','SUI'] },
+  { name:'Grupo C', codes:['BRA','MAR','HAI','SCO'] },
+  { name:'Grupo D', codes:['USA','PAR','AUS','TUR'] },
+  { name:'Grupo E', codes:['GER','CUW','CIV','ECU'] },
+  { name:'Grupo F', codes:['NED','JPN','TUN','SWE'] },
+  { name:'Grupo G', codes:['BEL','EGY','IRN','NZL'] },
+  { name:'Grupo H', codes:['ESP','CPV','KSA','URU'] },
+  { name:'Grupo I', codes:['FRA','SEN','NOR','IRQ'] },
+  { name:'Grupo J', codes:['ARG','ALG','AUT','JOR'] },
+  { name:'Grupo K', codes:['POR','COD','UZB','COL'] },
+  { name:'Grupo L', codes:['ENG','CRO','GHA','PAN'] }
+];
+
 function doPrint(){
   var inclTenho=document.getElementById('chk-tenho').checked;
   var inclFalta=document.getElementById('chk-falta').checked;
   var inclRep=document.getElementById('chk-rep').checked;
+  var inclCoca=document.getElementById('chk-coca').checked;
+  var inclLeg=document.getElementById('chk-leg').checked;
   if(!inclTenho&&!inclFalta&&!inclRep){ alert('Selecione pelo menos uma opcao.'); return; }
   var order=document.querySelector('input[name="print-order"]:checked').value;
-  var teamList=order==='alpha'?TEAMS.slice().sort(function(a,b){ return a.name.localeCompare(b.name); }):TEAMS;
-  var sections=[];
-  teamList.forEach(function(team){
+
+  function buildTeamSection(team){
     var start=team.code==='FWC'?0:1;
     var end=team.code==='FWC'?(team.count-1):team.count;
     var tenhoList=[],faltaList=[],repList=[];
@@ -661,24 +687,67 @@ function doPrint(){
     } else {
       for(var n=start;n<=end;n++){
         var v=getVal(team.code,n);
-        var label=team.labels&&team.labels[n]?team.labels[n]:team.code+' '+n;
+        var label=team.labels&&team.labels[n]?team.labels[n]:team.code+('0'+n).slice(-2);
         if(v===0) faltaList.push(label);
         else if(v===1) tenhoList.push(label);
         else if(v>=2) repList.push(label+' x'+(v-1));
       }
     }
     var hasData=(inclTenho&&tenhoList.length>0)||(inclFalta&&faltaList.length>0)||(inclRep&&repList.length>0);
-    if(!hasData) return;
-    var html='<div style="margin-bottom:18px;break-inside:avoid;">';
+    if(!hasData) return '';
     var pgLabel='';
     if(team.pages&&team.pages!=='-') pgLabel=' (pag. '+team.pages+')';
-    html+='<div style="font-weight:700;font-size:13pt;border-bottom:2px solid #009c3b;padding-bottom:3px;margin-bottom:8px;">'+team.flag+' '+team.code+' - '+team.name+'<span style="font-size:9pt;font-weight:400;color:#666;">'+pgLabel+'</span></div>';
-    if(inclTenho&&tenhoList.length>0) html+='<div style="margin-bottom:6px;"><span style="font-weight:700;color:#16a34a;">Tenho ('+tenhoList.length+'):</span> '+tenhoList.join(', ')+'</div>';
-    if(inclFalta&&faltaList.length>0) html+='<div style="margin-bottom:6px;"><span style="font-weight:700;color:#2563eb;">Faltam ('+faltaList.length+'):</span> '+faltaList.join(', ')+'</div>';
-    if(inclRep&&repList.length>0) html+='<div style="margin-bottom:6px;"><span style="font-weight:700;color:#b45309;">Repetidas ('+repList.length+'):</span> '+repList.join(', ')+'</div>';
+    var html='<div style="margin-bottom:10px;break-inside:avoid;">';
+    html+='<div style="font-weight:700;font-size:11pt;border-bottom:1px solid #009c3b;padding-bottom:2px;margin-bottom:5px;">'+team.flag+' '+team.code+' - '+team.name+'<span style="font-size:8pt;font-weight:400;color:#666;">'+pgLabel+'</span></div>';
+    if(inclTenho&&tenhoList.length>0) html+='<div style="margin-bottom:4px;font-size:9pt;"><span style="font-weight:700;color:#16a34a;">Tenho ('+tenhoList.length+'):</span> '+tenhoList.join(', ')+'</div>';
+    if(inclFalta&&faltaList.length>0) html+='<div style="margin-bottom:4px;font-size:9pt;"><span style="font-weight:700;color:#2563eb;">Faltam ('+faltaList.length+'):</span> '+faltaList.join(', ')+'</div>';
+    if(inclRep&&repList.length>0) html+='<div style="margin-bottom:4px;font-size:9pt;"><span style="font-weight:700;color:#b45309;">Repetidas ('+repList.length+'):</span> '+repList.join(', ')+'</div>';
     html+='</div>';
-    sections.push(html);
-  });
+    return html;
+  }
+
+  var sections=[];
+
+  if(order==='alpha'){
+    // alphabetical - flat list
+    var teamList=TEAMS.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+    teamList.forEach(function(team){
+      if(team.type==='coca'&&!inclCoca) return;
+      if(team.type==='legends'&&!inclLeg) return;
+      var s=buildTeamSection(team); if(s) sections.push(s);
+    });
+  } else {
+    // album order - grouped by competition group
+    // FWC first
+    var fwcTeam=TEAMS.find(function(t){ return t.code==='FWC'; });
+    if(fwcTeam){
+      var s=buildTeamSection(fwcTeam);
+      if(s) sections.push('<div style="break-inside:avoid;margin-bottom:16px;"><div style="font-weight:700;font-size:13pt;color:#002776;border-bottom:3px solid #009c3b;padding-bottom:4px;margin-bottom:10px;">Especiais da Copa</div>'+s+'</div>');
+    }
+    // Groups
+    GROUPS.forEach(function(grp){
+      var grpSections=[];
+      grp.codes.forEach(function(code){
+        var team=TEAMS.find(function(t){ return t.code===code; });
+        if(!team) return;
+        var s=buildTeamSection(team); if(s) grpSections.push(s);
+      });
+      if(grpSections.length>0){
+        sections.push('<div style="break-inside:avoid;margin-bottom:16px;"><div style="font-weight:700;font-size:13pt;color:#002776;border-bottom:3px solid #009c3b;padding-bottom:4px;margin-bottom:10px;">'+grp.name+'</div>'+grpSections.join('')+'</div>');
+      }
+    });
+    // Coca-Cola
+    if(inclCoca){
+      var cocaTeam=TEAMS.find(function(t){ return t.code==='COCA'; });
+      if(cocaTeam){ var s=buildTeamSection(cocaTeam); if(s) sections.push('<div style="break-inside:avoid;margin-bottom:16px;"><div style="font-weight:700;font-size:13pt;color:#002776;border-bottom:3px solid #e8000d;padding-bottom:4px;margin-bottom:10px;">Coca-Cola</div>'+s+'</div>'); }
+    }
+    // Legends
+    if(inclLeg){
+      var legTeam=TEAMS.find(function(t){ return t.code==='LEGENDS'; });
+      if(legTeam){ var s=buildTeamSection(legTeam); if(s) sections.push('<div style="break-inside:avoid;margin-bottom:16px;"><div style="font-weight:700;font-size:13pt;color:#002776;border-bottom:3px solid #9b59b6;padding-bottom:4px;margin-bottom:10px;">Legends</div>'+s+'</div>'); }
+    }
+  }
+
   if(sections.length===0){ alert('Nenhuma figurinha encontrada.'); return; }
   var tipos=[];
   if(inclTenho) tipos.push('Tenho');
@@ -687,7 +756,7 @@ function doPrint(){
   var titulo='Copa 2026 - '+tipos.join(' / ');
   var data=new Date().toLocaleDateString('pt-BR');
   var win=window.open('','_blank');
-  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>'+titulo+'</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;padding:24px 32px;background:#fff;}h1{font-size:16pt;color:#002776;border-bottom:3px solid #009c3b;padding-bottom:6px;margin-bottom:4px;}.subtitle{font-size:8.5pt;color:#666;margin-bottom:20px;}.sections{column-count:2;column-gap:28px;}@media print{.no-print{display:none;}.sections{column-count:2;}}</style></head><body><h1>Copa 2026 - Minhas Figurinhas</h1><p class="subtitle">Gerado em '+data+' - '+titulo+'</p><button class="no-print" onclick="window.print()" style="margin-bottom:16px;background:#009c3b;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:10pt;cursor:pointer;">Imprimir / Salvar PDF</button><div class="sections">'+sections.join('\n')+'</div></body></html>');
+  win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>'+titulo+'</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;padding:20px 28px;background:#fff;}h1{font-size:15pt;color:#002776;border-bottom:3px solid #009c3b;padding-bottom:6px;margin-bottom:4px;}.subtitle{font-size:8pt;color:#666;margin-bottom:16px;}.sections{column-count:2;column-gap:24px;}@media print{.no-print{display:none;}.sections{column-count:2;}}</style></head><body><h1>Copa 2026 - Minhas Figurinhas</h1><p class="subtitle">Gerado em '+data+' - '+titulo+'</p><button class="no-print" onclick="window.print()" style="margin-bottom:14px;background:#009c3b;color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:10pt;cursor:pointer;">Imprimir / Salvar PDF</button><div class="sections">'+sections.join('')+'</div></body></html>');
   win.document.close();
   closePrintModal();
 }
@@ -943,6 +1012,102 @@ function doSyncGSheets(){
   .catch(function(err){
     alert('Erro ao sincronizar: '+err.message);
     btn.textContent='Sincronizar Google Sheets';
+    btn.className='btn-sync';
+  });
+}
+
+function loadFromGSheets(){
+  if(!tokenClient){ alert('API do Google nao carregou. Verifique sua conexao e recarregue a pagina.'); return; }
+  var btn=document.getElementById('btnLoad');
+  btn.textContent='Autenticando...';
+  btn.className='btn-sync syncing';
+  if(gapiToken){ doLoadFromGSheets(); }
+  else{
+    tokenClient.callback=function(resp){
+      if(resp.error){ alert('Erro na autenticacao Google: '+resp.error); btn.textContent='Carregar do Google Sheets'; btn.className='btn-sync'; return; }
+      gapiToken=resp.access_token;
+      doLoadFromGSheets();
+    };
+    tokenClient.requestAccessToken();
+  }
+}
+
+function doLoadFromGSheets(){
+  var btn=document.getElementById('btnLoad');
+  btn.textContent='Carregando...';
+  btn.className='btn-sync syncing';
+
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+GSHEET_ID+'/values/Album!A2:D',{
+    headers:{ 'Authorization':'Bearer '+gapiToken }
+  })
+  .then(function(r){
+    if(r.status===401){ gapiToken=null; tokenClient.requestAccessToken(); return null; }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  })
+  .then(function(data){
+    if(!data) return;
+    var rows=data.values||[];
+    if(rows.length===0){ alert('Planilha vazia ou sem dados.'); btn.textContent='Carregar do Google Sheets'; btn.className='btn-sync'; return; }
+    if(!confirm('Isso vai substituir todos os dados locais pelos dados da planilha. Confirma?')){ btn.textContent='Carregar do Google Sheets'; btn.className='btn-sync'; return; }
+
+    // rebuild state from sheet
+    var newState={};
+    rows.forEach(function(row){
+      var code=row[0];
+      var val=parseInt(row[2])||0;
+      if(!code||val===0) return;
+      // Album rows: code is label like BRA01 or FWC-00 Panini etc
+      // We stored them as team.labels[n] or teamCode+padded(n)
+      // Find matching key in original state format: CODE-N
+      // Try to match by reverse lookup
+      var found=false;
+      TEAMS.forEach(function(team){
+        if(found) return;
+        if(team.type==='legends'){
+          // LEGENDS-N-cor format
+          if(code.indexOf('LEGENDS-')===0){
+            newState[code]=val;
+            found=true;
+          }
+        } else {
+          var start=team.code==='FWC'?0:1;
+          var end=team.code==='FWC'?(team.count-1):team.count;
+          for(var n=start;n<=end;n++){
+            var label=team.labels&&team.labels[n]?team.labels[n]:team.code+('0'+n).slice(-2);
+            if(label===code){
+              newState[team.code+'-'+n]=val;
+              found=true;
+              break;
+            }
+          }
+        }
+      });
+    });
+
+    state=newState;
+    saveState(state);
+    updateAll();
+
+    // Also load trades
+    fetch('https://sheets.googleapis.com/v4/spreadsheets/'+GSHEET_ID+'/values/Trocas!A2:A',{
+      headers:{ 'Authorization':'Bearer '+gapiToken }
+    })
+    .then(function(r2){ return r2.json(); })
+    .then(function(d2){
+      if(d2&&d2.values&&d2.values.length>0){
+        trades=d2.values.map(function(r){ return r[0]; }).filter(function(v){ return v; });
+        saveTrades(trades);
+        renderTrades();
+      }
+      btn.textContent='Carregado!';
+      btn.className='btn-sync synced';
+      setTimeout(function(){ btn.textContent='Carregar do Google Sheets'; btn.className='btn-sync'; },3000);
+    });
+  })
+  .catch(function(err){
+    alert('Erro ao carregar: '+err.message);
+    btn.textContent='Carregar do Google Sheets';
     btn.className='btn-sync';
   });
 }
